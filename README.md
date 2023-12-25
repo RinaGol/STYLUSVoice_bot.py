@@ -2,16 +2,12 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from telegram.ext import ConversationHandler
 
-# Замініть 'YOUR_BOT_TOKEN' на токен вашого бота
 TOKEN = '6615244918:AAGLLzAH6TzlfvxBa84vPCoFPfOOdzGCg1I'
 
-# Стани для конверсаційного обробника
 CHOOSING, PROPOSAL, COMPLAINT = range(3)
 
-# Визначте клавіатуру для вибору типу повідомлення
 keyboard = [['Пропозиція', 'Скарга']]
 
-# Словник для зберігання інформації про користувачів
 user_data = {}
 
 def start(update: Update, context: CallbackContext) -> int:
@@ -44,13 +40,11 @@ def received_information(update: Update, context: CallbackContext) -> int:
     # Отримання ніку користувача
     user_nick = user.username if user.username else f"{user.first_name} {user.last_name}"
 
-    # Відправлення відповіді
     update.message.reply_text(
         f"Дякуємо за звернення, {user_nick}!\n"
         "Наша HR-команда найближчим часом зв'яжеться з тобою."
     )
 
-    # Скидання даних користувача
     user_data.clear()
 
     return ConversationHandler.END
@@ -64,13 +58,8 @@ def cancel(update: Update, context: CallbackContext) -> int:
 
 def main():
     """Основна функція"""
-    # Створення об'єкта Updater та передача токену
     updater = Updater(TOKEN, use_context=True)
-
-    # Отримання об'єкту диспетчера для реєстрації обробників
     dp = updater.dispatcher
-
-    # Створення конверсаційного обробника
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
         states={
@@ -80,14 +69,8 @@ def main():
         },
         fallbacks=[CommandHandler('cancel', cancel)],
     )
-
-    # Додавання конверсаційного обробника до диспетчера
     dp.add_handler(conv_handler)
-
-    # Запуск бота
     updater.start_polling()
-
-    # Зупинка бота при натисканні Ctrl+C
     updater.idle()
 
 if __name__ == '__main__':
